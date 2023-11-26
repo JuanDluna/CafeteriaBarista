@@ -1,8 +1,7 @@
-
 <?php
 
 // Create a connection
-$conn = new mysqli("localhost", "root", "230403", "baristacafe");
+$conn = new mysqli("localhost", "root", "CacadeVaca230403", "baristacafe");
 
 // Check connection
 if ($conn->connect_error) {
@@ -16,12 +15,13 @@ if ($conn->connect_error) {
 
 <!doctype html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="PROYECTO ESCOLAR DE BASES DE DATOS">
+    <meta name="author" content="Juan De Luna // Ronaldo Martinez // Uriel Acosta">
 
     <title>Reservacion</title>
 
@@ -72,6 +72,12 @@ if ($conn->connect_error) {
                             <a class="btn custom-btn custom-border-btn" href="reservation.php">
                                 Reserva aquí
                                 <i class="bi-arrow-up-right ms-2"></i>
+                            </a>
+                        </div>
+                        <div class="ms-lg-3">
+                            <a class="btn custom-btn custom-border-btn" href="cuenta.php">
+                                Cuenta
+                                <i class="bi-person-fill ms-2"></i>
                             </a>
                         </div>
                     </div>
@@ -126,18 +132,19 @@ if ($conn->connect_error) {
                                                 </div>
                                                 <div class="col-lg-12 col-12">
                                                     <input type="number" name="num_personas" id="booking-form-number"
-                                                        class="form-control" placeholder="Número de personas"
-                                                        required>
+                                                        class="form-control" placeholder="Número de personas" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
                                                     <input type="text" name="direccion" id="booking-form-direccion"
                                                         class="form-control" placeholder="Dirección" required="">
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="tel" class="form-control" name="telefono1" placeholder="Teléfono 1" pattern="[0-9]+" required>
+                                                    <input type="tel" class="form-control" name="telefono1"
+                                                        placeholder="Teléfono 1" pattern="[0-9]+" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="tel" class="form-control" name="telefono2" placeholder="Teléfono 2" pattern="[0-9]+" >
+                                                    <input type="tel" class="form-control" name="telefono2"
+                                                        placeholder="Teléfono 2" pattern="[0-9]+">
                                                 </div>
                                                 <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2">
                                                     <button type="submit" class="form-control">Continuar</button>

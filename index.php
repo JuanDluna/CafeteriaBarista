@@ -62,6 +62,12 @@
                                     <i class="bi-arrow-up-right ms-2"></i>
                                 </a>
                             </div>
+                            <div class="ms-lg-3">
+                                <a class="btn custom-btn custom-border-btn" href="cuenta.php">
+                                    Cuenta
+                                    <i class="bi-person-fill ms-2"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </nav>
