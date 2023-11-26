@@ -1,6 +1,21 @@
-<!doctype html>
-<html lang="en">
 
+<?php
+
+// Create a connection
+$conn = new mysqli("localhost", "root", "230403", "baristacafe");
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+
+
+
+?>
+
+<!doctype html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,23 +53,23 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-lg-auto">
                             <li class="nav-item">
-                                <a class="nav-link" href="index.html#section_1">Inicio</a>
+                                <a class="nav-link" href="index.php#section_1">Inicio</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="index.html#section_2">Acerca de</a>
+                                <a class="nav-link" href="index.php#section_2">Acerca de</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="index.html#section_3">Nuestro menu</a>
+                                <a class="nav-link" href="index.php#section_3">Nuestro menu</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="index.html#section_4">Reseñas</a>
+                                <a class="nav-link" href="index.php#section_4">Reseñas</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="index.html#section_5">Contacto</a>
+                                <a class="nav-link" href="index.php#section_5">Contacto</a>
                             </li>
                         </ul>
                         <div class="ms-lg-3">
-                            <a class="btn custom-btn custom-border-btn" href="reservation.html">
+                            <a class="btn custom-btn custom-border-btn" href="reservation.php">
                                 Reserva aquí
                                 <i class="bi-arrow-up-right ms-2"></i>
                             </a>
@@ -66,25 +81,28 @@
 
 
         <section class="booking-section section-padding">
-
-            <div class="container" id="IsClient">
+            <div id="IsClient" class="container min-vh-100 d-flex flex-column justify-content-center">
                 <div class="row custom-form booking-form">
-                    <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2 btn">
-                        <button id="buttonNotClient" type="button" class="form-control">¡Soy cliente nuevo!</button>
+                    <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2 d-flex">
+                        <button id="buttonNotClient" type="button" class="btn custom-btn flex-grow-1 btn-lg">¡Soy
+                            cliente nuevo!</button>
                     </div>
-                    <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2 btn">
-                        <button id="buttonIsClient" type="button" class="form-control">¿Ya eres cliente?</button>
+                </div>
+                <div class="row custom-form booking-form">
+                    <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2 d-flex">
+                        <button id="buttonIsClient" type="button" class="btn custom-btn flex-grow-1 btn-lg">¿Ya eres
+                            cliente?</button>
                     </div>
                 </div>
             </div>
-
             <div class="container" id="formNewClient">
                 <div class="row">
                     <div class="col-lg-10 col-12 mx-auto">
                         <div class="booking-form-wrap">
                             <div class="row">
                                 <div class="col-lg-7 col-12 p-0">
-                                    <form class="custom-form booking-form" action="#" method="post" role="form">
+                                    <form class="custom-form booking-form" action="guardar_reservacion.php"
+                                        method="post" role="form">
                                         <div class="text-center mb-4 pb-lg-2">
                                             <em class="text-white">Reservación para clientes nuevos</em>
                                             <h2 class="text-white">Haz tu reservación</h2>
@@ -92,32 +110,37 @@
                                         <div class="booking-form-body">
                                             <div class="row">
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="text" name="booking-form-name" id="booking-form-name"
+                                                    <input type="text" name="nombre" id="booking-form-name"
                                                         class="form-control" placeholder="Nombre completo..." required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="tel" class="form-control" name="booking-form-phone"
-                                                        placeholder="Teléfono: (10 dígitos)"
-                                                        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required="">
+                                                    <input type="email" class="form-control" name="correo"
+                                                        placeholder="Correo Electrónico" required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input class="form-control" type="time" name="booking-form-time"
-                                                        value="18:30">
+                                                    <input class="form-control" type="time" name="hora" value="18:30">
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="date" name="booking-form-date" id="booking-form-date"
+                                                    <input type="date" name="fecha" id="booking-form-date"
                                                         class="form-control" placeholder="Fecha" required="">
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="number" name="booking-form-number"
-                                                        id="booking-form-number" class="form-control"
-                                                        placeholder="Número de personas" required="">
-                                                    <textarea name="booking-form-message" rows="3" class="form-control"
-                                                        id="booking-form-message"
-                                                        placeholder="Comentarios (Opcional)"></textarea>
+                                                    <input type="number" name="num_personas" id="booking-form-number"
+                                                        class="form-control" placeholder="Número de personas"
+                                                        required>
+                                                </div>
+                                                <div class="col-lg-12 col-12">
+                                                    <input type="text" name="direccion" id="booking-form-direccion"
+                                                        class="form-control" placeholder="Dirección" required="">
+                                                </div>
+                                                <div class="col-lg-12 col-12">
+                                                    <input type="tel" class="form-control" name="telefono1" placeholder="Teléfono 1" pattern="[0-9]+" required>
+                                                </div>
+                                                <div class="col-lg-12 col-12">
+                                                    <input type="tel" class="form-control" name="telefono2" placeholder="Teléfono 2" pattern="[0-9]+" >
                                                 </div>
                                                 <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2">
-                                                    <button type="button" class="form-control">Continuar</button>
+                                                    <button type="submit" class="form-control">Continuar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -135,7 +158,6 @@
                 </div>
             </div>
 
-
             <div class="container" id="existing-client-form">
                 <div class="row">
                     <div class="col-lg-10 col-12 mx-auto">
@@ -149,7 +171,29 @@
                                             <h2 class="text-white">Haz tu reservación</h2>
                                         </div>
                                         <div class="booking-form-body">
-                                            <!-- Formulario para clientes existentes -->
+                                            <div class="row">
+                                                <div class="col-lg-6 col-12">
+                                                    <input type="text" name="booking-form-id" id="booking-form-id"
+                                                        class="form-control" placeholder="IdCliente" required>
+                                                </div>
+                                                <div class="col-lg-6 col-12">
+                                                    <input type="email" name="booking-form-email"
+                                                        id="booking-form-email" class="form-control"
+                                                        placeholder="Correo Electrónico" required>
+                                                </div>
+                                                <div class="col-lg-6 col-12">
+                                                    <input type="datetime-local" name="booking-form-datetime"
+                                                        id="booking-form-datetime" class="form-control" required>
+                                                </div>
+                                                <div class="col-lg-6 col-12">
+                                                    <input type="number" name="booking-form-number"
+                                                        id="booking-form-number" class="form-control"
+                                                        placeholder="Número de personas" required>
+                                                </div>
+                                                <div class="col-lg-12 col-12">
+                                                    <button type="submit" class="form-control">Continuar</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -164,7 +208,6 @@
                     </div>
                 </div>
             </div>
-
         </section>
 
         <footer class="site-footer">
@@ -240,7 +283,6 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.sticky.js"></script>
         <script src="js/vegas.min.js"></script>
-        <script src="js/custom.js"></script>
         <script>
             $(document).ready(function () {
                 $("#formNewClient").hide();
@@ -248,16 +290,18 @@
             });
 
             $("#buttonNotClient").click(function () {
+                $("#IsClient").removeClass("min-vh-100");
+                $("#IsClient").addClass("d-none");
                 $("#formNewClient").show();
-                $("#IsClient").hide();
             });
 
             $("#buttonIsClient").click(function () {
+                $("#IsClient").removeClass("min-vh-100");
+                $("#IsClient").addClass("d-none");
                 $("#existing-client-form").show();
-                $("#IsClient").hide();
             });
-
         </script>
+
 </body>
 
 </html>

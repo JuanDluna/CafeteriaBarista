@@ -57,7 +57,7 @@
                             </ul>
 
                             <div class="ms-lg-3">
-                                <a class="btn custom-btn custom-border-btn" href="reservation.html">
+                                <a class="btn custom-btn custom-border-btn" href="reservation.php">
                                     Reserva Aquí
                                     <i class="bi-arrow-up-right ms-2"></i>
                                 </a>
