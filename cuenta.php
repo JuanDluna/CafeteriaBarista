@@ -25,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_start();
             $_SESSION['id_cliente'] = $id_cliente;
             $_SESSION['correo'] = $correo;
+            $_SESSION['nombre'] = $result->fetch_assoc()['NombreCliente'];
+            $_SESSION['direccion'] = $result->fetch_assoc()['Direccion'];
             header("Location: panel-cliente.php");
         } else {
             echo "<script>alert('El id_cliente o el correo son incorrectos.')</script>";
