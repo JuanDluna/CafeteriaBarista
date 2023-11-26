@@ -2,7 +2,6 @@
 // Verificar si se recibió un método POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-
     $conn = new mysqli("localhost", "root", "CacadeVaca230403", "baristacafe");
 
     // Verificar si la conexión fue exitosa
@@ -16,8 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $correo = $_POST['correo'];
 
         // Verificar si el id_cliente existe en la base de datos
-        $sql = "SELECT * FROM cliente WHERE IdCliente = '$id_cliente' AND CorreoElectronico = '$correo'";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT * FROM cliente WHERE IdCliente = ? AND CorreoElectronico = ?");
+        $stmt->bind_param("ss", $id_cliente, $correo);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             // Iniciar sesión
@@ -28,13 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<script>alert('El id_cliente o el correo son incorrectos.')</script>";
         }
-    }else{
+    } else {
         $id_empleado = $_POST['id_empleado'];
         $nombre_empleado = $_POST['nombre_empleado'];
 
         // Verificar si el id_empleado existe en la base de datos
-        $sql = "SELECT * FROM empleado WHERE id_empleado = '$id_empleado' AND nombre_empleado = '$nombre_empleado'";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT * FROM empleado WHERE IdEmpleado = ? AND NombreEmpleado = ?");
+        $stmt->bind_param("ss", $id_empleado, $nombre_empleado);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             // Iniciar sesión
@@ -45,11 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<script>alert('El id_empleado o el nombre_empleado son incorrectos.')</script>";
         }
-    
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html>
