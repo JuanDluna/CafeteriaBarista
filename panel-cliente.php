@@ -7,7 +7,7 @@ if (!isset($_SESSION['id_cliente'])) {
     exit();
 }
 
-$sql = new mysqli("localhost", "root", "", "baristacafe");
+$sql = new mysqli("localhost", "root", "230403", "baristacafe");
 
 // Check connection
 if ($sql->connect_error) {
@@ -245,7 +245,6 @@ if ($sql->connect_error) {
                 }
             });
             $(document).on('click', '.modificar-reservacion', function() {
-                console.log('click modificar reservacion');
                 var button = $(this);
                 var row = button.closest('tr');
 
@@ -278,16 +277,14 @@ if ($sql->connect_error) {
                 var numeroMesa = row.find('td:eq(2)').text();
 
                 // Formatear la nueva fecha a "dd/mm/aaaa"
-                var fechaParts = nuevaFecha.split('-');
-                nuevaFecha = fechaParts[2] + '/' + fechaParts[1] + '/' + fechaParts[0];
 
                 // Reemplazar los inputs con los valores formateados
-                row.find('td:eq(0)').text(nuevaFecha);
-                row.find('td:eq(1)').text(nuevaHora);
+                // row.find('td:eq(0)').text(nuevaFecha);
+                // row.find('td:eq(1)').text(nuevaHora);
 
                 // Cambiar el botón a "Modificar" y cambiar la clase
-                button.text('Modificar');
-                button.removeClass('continuar-reservacion btn-primary').addClass('modificar-reservacion btn-warning');
+                // button.text('Modificar');
+                // button.removeClass('continuar-reservacion btn-primary').addClass('modificar-reservacion btn-warning');
 
                 // Aquí se agrega un formulario oculto para enviar los datos al servidor
                 var form = $("<form>")

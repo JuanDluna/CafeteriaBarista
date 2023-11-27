@@ -7,10 +7,6 @@ $conn = new mysqli("localhost", "root", "230403", "baristacafe");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-
-
-
 ?>
 
 <!doctype html>
@@ -28,9 +24,7 @@ if ($conn->connect_error) {
     <!-- CSS FILES -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,400;0,600;0,700;1,200;1,700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,400;0,600;0,700;1,200;1,700&display=swap" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="css/vegas.min.css" rel="stylesheet">
@@ -46,8 +40,7 @@ if ($conn->connect_error) {
                         <img src="images/coffee-beans.png" class="navbar-brand-image img-fluid" alt="">
                         Barista Cafe
                     </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
@@ -107,8 +100,7 @@ if ($conn->connect_error) {
                         <div class="booking-form-wrap">
                             <div class="row">
                                 <div class="col-lg-7 col-12 p-0">
-                                    <form class="custom-form booking-form" action="guardar_reservacion.php"
-                                        method="post" role="form">
+                                    <form class="custom-form booking-form" action="" method="post" role="form">
                                         <div class="text-center mb-4 pb-lg-2">
                                             <em class="text-white">Reservación para clientes nuevos</em>
                                             <h2 class="text-white">Haz tu reservación</h2>
@@ -116,38 +108,28 @@ if ($conn->connect_error) {
                                         <div class="booking-form-body">
                                             <div class="row">
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="text" name="nombre" id="booking-form-name"
-                                                        class="form-control" placeholder="Nombre completo..." required>
+                                                    <input type="text" name="nombre" id="booking-form-name" class="form-control" placeholder="Nombre completo..." required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="email" class="form-control" name="correo"
-                                                        placeholder="Correo Electrónico" required>
-                                                </div>
-                                                <div class="col-lg-6 col-12">
-                                                    <input class="form-control" type="time" name="hora" value="18:30">
-                                                </div>
-                                                <div class="col-lg-6 col-12">
-                                                    <input type="date" name="fecha" id="booking-form-date"
-                                                        class="form-control" placeholder="Fecha" required="">
+                                                    <input type="email" class="form-control" name="correo" id="booking-form-email" placeholder="Correo Electrónico" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="number" name="num_personas" id="booking-form-number"
-                                                        class="form-control" placeholder="Número de personas" required>
+                                                    <input type="datetime-local" name="booking-form-datetime" id="booking-form-datetime" class="form-control" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="text" name="direccion" id="booking-form-direccion"
-                                                        class="form-control" placeholder="Dirección" required="">
+                                                    <input type="number" name="num_personas" id="booking-form-number" class="form-control" placeholder="Número de personas" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="tel" class="form-control" name="telefono1"
-                                                        placeholder="Teléfono 1" pattern="[0-9]+" required>
+                                                    <input type="text" name="direccion" id="booking-form-direccion" class="form-control" placeholder="Dirección" required="">
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="tel" class="form-control" name="telefono2"
-                                                        placeholder="Teléfono 2" pattern="[0-9]+">
+                                                    <input type="tel" class="form-control" name="telefono1" id="booking-form-tel1" placeholder="Teléfono 1" pattern="[0-9]+" required>
+                                                </div>
+                                                <div class="col-lg-12 col-12">
+                                                    <input type="tel" class="form-control" name="telefono2" id="booking-form-tel2" placeholder="Teléfono 2" pattern="[0-9]+">
                                                 </div>
                                                 <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2">
-                                                    <button type="submit" class="form-control">Continuar</button>
+                                                    <button type="submit" class="form-control" id="submitNewClient">Continuar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,8 +137,7 @@ if ($conn->connect_error) {
                                 </div>
                                 <div class="col-lg-5 col-12 p-0">
                                     <div class="booking-form-image-wrap">
-                                        <img src="images/barman-with-fruits.jpg" class="booking-form-image img-fluid"
-                                            alt="">
+                                        <img src="images/barman-with-fruits.jpg" class="booking-form-image img-fluid" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -171,8 +152,7 @@ if ($conn->connect_error) {
                         <div class="booking-form-wrap">
                             <div class="row">
                                 <div class="col-lg-7 col-12 p-0">
-                                    <form class="custom-form booking-form" action="existing_client_reservation.html"
-                                        method="post" role="form">
+                                    <form class="custom-form booking-form" action="existing_client_reservation.html" method="post" role="form">
                                         <div class="text-center mb-4 pb-lg-2">
                                             <em class="text-white">Reservación para clientes existentes</em>
                                             <h2 class="text-white">Haz tu reservación</h2>
@@ -180,25 +160,19 @@ if ($conn->connect_error) {
                                         <div class="booking-form-body">
                                             <div class="row">
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="text" name="booking-form-id" id="booking-form-id"
-                                                        class="form-control" placeholder="IdCliente" required>
+                                                    <input type="text" name="booking-form-id" id="booking-form-id" class="form-control" placeholder="IdCliente" required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="email" name="booking-form-email"
-                                                        id="booking-form-email" class="form-control"
-                                                        placeholder="Correo Electrónico" required>
+                                                    <input type="email" name="booking-form-email" id="booking-form-email" class="form-control" placeholder="Correo Electrónico" required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="datetime-local" name="booking-form-datetime"
-                                                        id="booking-form-datetime" class="form-control" required>
+                                                    <input type="datetime-local" name="booking-form-datetime" id="booking-form-datetime" class="form-control" required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="number" name="booking-form-number"
-                                                        id="booking-form-number" class="form-control"
-                                                        placeholder="Número de personas" required>
+                                                    <input type="number" name="booking-form-number" id="booking-form-number" class="form-control" placeholder="Número de personas" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <button type="submit" class="form-control">Continuar</button>
+                                                    <button type="submit" id="buttonExistingClient" class="form-control">Continuar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -206,8 +180,7 @@ if ($conn->connect_error) {
                                 </div>
                                 <div class="col-lg-5 col-12 p-0">
                                     <div class="booking-form-image-wrap">
-                                        <img src="images/barman-with-fruits.jpg" class="booking-form-image img-fluid"
-                                            alt="">
+                                        <img src="images/barman-with-fruits.jpg" class="booking-form-image img-fluid" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -291,21 +264,82 @@ if ($conn->connect_error) {
         <script src="js/jquery.sticky.js"></script>
         <script src="js/vegas.min.js"></script>
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $("#formNewClient").hide();
                 $("#existing-client-form").hide();
             });
 
-            $("#buttonNotClient").click(function () {
+            $("#buttonNotClient").click(function() {
                 $("#IsClient").removeClass("min-vh-100");
                 $("#IsClient").addClass("d-none");
                 $("#formNewClient").show();
             });
 
-            $("#buttonIsClient").click(function () {
+            $("#buttonIsClient").click(function() {
                 $("#IsClient").removeClass("min-vh-100");
                 $("#IsClient").addClass("d-none");
                 $("#existing-client-form").show();
+            });
+
+            $("#submitNewClient").click(function() {
+                var fechaHora = $('#booking-form-datetime').val();
+                var nombre = $('#booking-form-name').val();
+                var correo = $('#booking-form-email').val();
+                var direccion = $('#booking-form-direccion').val();
+                var telefono1 = $('#booking-form-tel1').val();
+                var telefono2 = $('#booking-form-tel2').val();
+                var num_personas = $('#booking-form-number').val();
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'nuevo_cliente_reservacion.php', // Cambia esto con la ruta correcta
+                    data: {
+                        nombre: nombre,
+                        correo: correo,
+                        fechaHora: fechaHora,
+                        num_personas: num_personas,
+                        direccion: direccion,
+                        telefono1: telefono1,
+                        telefono2: telefono2
+                    },
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(err) {
+                        alert(err.message);
+                    }
+                });
+            });
+
+            $("#buttonExistingClient").click(function() {
+                var fechaHora = $('#booking-form-datetime').val();
+                var nombre = $('#booking-form-name').val();
+                var correo = $('#booking-form-email').val();
+                var direccion = $('#booking-form-direccion').val();
+                var telefono1 = $('#booking-form-tel1').val();
+                var telefono2 = $('#booking-form-tel2').val();
+                var num_personas = $('#booking-form-number').val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'cliente_existente_reservacion.php', // Cambia esto con la ruta correcta
+                    data: {
+                        nombre: nombre,
+                        correo: correo,
+                        fechaHora: fechaHora,
+                        num_personas: num_personas,
+                        direccion: direccion,
+                        telefono1: telefono1,
+                        telefono2: telefono2
+                    },
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(err) {
+                        alert(err.message);
+                    }
+                });
             });
         </script>
 

@@ -12,7 +12,7 @@ if (
 ) {
     $idProducto = $_POST['idProducto'];
 
-    $sql = new mysqli("localhost", "root", "", "baristacafe");
+    $sql = new mysqli("localhost", "root", "230403", "baristacafe");
 
     if ($sql->connect_error) {
         header("Content-Type: application/json");

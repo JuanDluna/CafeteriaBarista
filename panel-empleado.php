@@ -9,7 +9,7 @@ if (!isset($_SESSION['id_empleado']) || !isset($_SESSION['nombre_empleado'])) {
 
 // Aquí puedes incluir cualquier lógica específica para la página del cliente
 // ...}
-$sql = new mysqli("localhost", "root", "", "baristacafe");
+$sql = new mysqli("localhost", "root", "230403", "baristacafe");
 
 // Check connection
 if ($sql->connect_error) {

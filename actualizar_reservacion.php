@@ -22,7 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $horaReservacion = $nuevaFecha . " " . $nuevaHora;
 
-
     // Preparar la consulta
     $stmt = $sql->prepare("UPDATE reservacion SET FechaReservacion = ?, HoraReservacion = ? WHERE NumeroMesa = ? AND IdCliente = ?");
     $stmt->bind_param("ssii", $nuevaFecha, $horaReservacion, $numeroMesa, $idCliente);
