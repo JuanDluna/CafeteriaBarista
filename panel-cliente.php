@@ -7,7 +7,7 @@ if (!isset($_SESSION['id_cliente'])) {
     exit();
 }
 
-$sql = new mysqli("localhost", "root", "230403", "baristacafe");
+$sql = new mysqli("localhost", "root", "", "baristacafe");
 
 // Check connection
 if ($sql->connect_error) {

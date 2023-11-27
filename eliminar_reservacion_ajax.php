@@ -18,7 +18,7 @@ if (
     $fechaReservacion = $_POST['fechaReservacion'];
     $horaReservacion = $_POST['horaReservacion'];
 
-    $sql = new mysqli("localhost", "root", "230403", "baristacafe");
+    $sql = new mysqli("localhost", "root", "", "baristacafe");
 
     if ($sql->connect_error) {
         header("Content-Type: application/json");
