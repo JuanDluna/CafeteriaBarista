@@ -2,13 +2,18 @@
 // Verificar la sesión del cliente
 session_start();
 
-if (!isset($_SESSION['id_cliente']) || !isset($_SESSION['correo'])) {
+if (!isset($_SESSION['id_cliente'])) {
     header("Location: cuenta.php"); // Redirigir a la página de inicio de sesión si no hay sesión activa
     exit();
 }
 
-// Aquí puedes incluir cualquier lógica específica para la página del cliente
-// ...
+$sql = new mysqli("localhost", "root", "230403", "baristacafe");
+
+// Check connection
+if ($sql->connect_error) {
+    die("Connection failed: " . $sql->connect_error);
+}
+
 
 ?>
 
@@ -81,14 +86,55 @@ if (!isset($_SESSION['id_cliente']) || !isset($_SESSION['correo'])) {
         </nav>
     </header>
 
-    <!-- Contenido de la página del cliente -->
-    <section class="booking-section section-padding">
-        <div class="container">
-            <!-- Contenido específico de la página del cliente -->
-            <h2>Bienvenido, <?php echo $_SESSION['nombre']; ?>!</h2>
-            <!-- ... -->
+    <section class="booking-section section-padding bg-light text-dark">
+    <div class="container">
+        <h2 class="mt-5 text-light p-3" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);">Bienvenido, <?php echo $_SESSION['nombre']; ?>!</h2>
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-hover table-striped bg-white">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Fecha de reservación</th>
+                        <th>Hora de reservación</th>
+                        <th>Mesa asignada</th>
+                        <th>Acciones</th> <!-- Nueva columna para acciones -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Obtener las reservaciones del usuario
+                    $userId = $_SESSION['id_cliente'];
+                    $stmt = $sql->prepare("SELECT NumeroMesa, FechaReservacion, HoraReservacion FROM reservacion WHERE IdCliente = ?");
+                    $stmt->bind_param("s", $userId);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . date('d/m/Y', strtotime($row['FechaReservacion'])) . "</td>";
+                            $horaReservacion = date('H:i', strtotime($row['HoraReservacion']));
+                            echo "<td>" . $horaReservacion . "</td>";
+                            echo "<td>" . $row['NumeroMesa'] . "</td>";
+                            // Agregar enlaces para eliminar y modificar
+                            echo "<td>";
+                            echo "<button class='btn btn-danger btn-sm eliminar-reservacion' data-id='" . $row['IdReservacion'] . "'>Eliminar</button>";
+                            echo "</td>";
+                            
+                            echo "<button onclick=\"modificarReservacion()\" class='btn btn-primary btn-sm'>Modificar</button>";
+                            echo "</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='3' class='text-center'>No se encontraron reservaciones.</td></tr>";
+                    }
+                    $stmt->close();
+                    ?>
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
+</section>
+
+
 
     <!-- Pie de Página -->
     <footer class="site-footer">
