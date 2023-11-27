@@ -1,7 +1,7 @@
 <?php
 
 // Create a connection
-$conn = new mysqli("localhost", "root", "CacadeVaca230403", "baristacafe");
+$conn = new mysqli("localhost", "root", "230403", "baristacafe");
 
 // Check connection
 if ($conn->connect_error) {
