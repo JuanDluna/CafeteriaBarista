@@ -275,6 +275,7 @@ if ($sql->connect_error) {
                 // Obtener los valores de los campos de entrada
                 var nuevaFecha = row.find('td:eq(0) input').val();
                 var nuevaHora = row.find('td:eq(1) input').val();
+                var numeroMesa = row.find('td:eq(2)').text();
 
                 // Formatear la nueva fecha a "dd/mm/aaaa"
                 var fechaParts = nuevaFecha.split('-');
@@ -294,7 +295,9 @@ if ($sql->connect_error) {
                     .attr("action", "actualizar_reservacion.php") // Cambia esto al archivo que manejará la actualización
                     .css("display", "none")
                     .append($("<input>").attr("type", "hidden").attr("name", "nuevaFecha").val(nuevaFecha))
-                    .append($("<input>").attr("type", "hidden").attr("name", "nuevaHora").val(nuevaHora));
+                    .append($("<input>").attr("type", "hidden").attr("name", "nuevaHora").val(nuevaHora))
+                    .append($("<input>").attr("type", "hidden").attr("name", "numeroMesa").val(numeroMesa));
+
 
                 // Agregar el formulario al cuerpo del documento y enviarlo
                 $("body").append(form);
