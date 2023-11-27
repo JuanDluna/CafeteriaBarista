@@ -120,6 +120,9 @@ if ($sql->connect_error) {
                             echo "<td>";
                             echo "<button class='btn btn-danger btn-sm eliminar-producto' data-id-producto='" . $row['IdProducto'] . "' data-id-producto='" . $row['NombreProducto'] . "' data-existencia='" . $row['Existencia'] . "' data-precio='" . $row['Precio'] . "'>Eliminar</button>";
                             echo "</td>";
+                            echo "<td>";
+                            echo "<button class='btn btn-warning btn-sm modificar-producto' data-id-producto='" . $row['IdProducto'] . "' data-nombre-producto='" . $row['NombreProducto'] . "' data-existencia='" . $row['Existencia'] . "' data-precio='" . $row['Precio'] . "'>Modificar</button>";
+                            echo "</td>";
                         
                         }
                     } else {
@@ -130,6 +133,7 @@ if ($sql->connect_error) {
                     </tbody>
                 </table>
                 <button id="agregar-producto" class="btn btn-primary">Agregar producto</button>            </div>
+                
         </div>
     </section>
     <!-- Pie de Página -->
@@ -207,6 +211,52 @@ if ($sql->connect_error) {
     <script src="js/jquery.sticky.js"></script>
     <script src="js/vegas.min.js"></script>
     <script>
+        $(document).on('click', '.modificar-producto', function () {
+            var fila = $(this).closest('tr');
+            var idProducto = $(this).data('id-producto');
+            var nombreProducto = fila.find('td:eq(1)');
+            var existencia = fila.find('td:eq(2)');
+            var precio = fila.find('td:eq(3)');
+            var acciones = fila.find('td:eq(4)');
+
+            nombreProducto.html('<input type="text" class="form-control" value="' + nombreProducto.text() + '">');
+            existencia.html('<input type="number" class="form-control" value="' + existencia.text() + '">');
+            precio.html('<input type="number" step="0.01" class="form-control" value="' + precio.text() + '">');
+            acciones.html('<button class="btn btn-primary btn-sm guardar-modificacion" data-id-producto="' + idProducto + '">Guardar</button>');
+        });
+        $(document).on('click', '.guardar-modificacion', function () {
+            var fila = $(this).closest('tr');
+            var idProducto = $(this).data('id-producto');
+            var nombreProducto = fila.find('input[type="text"]').val();
+            var existencia = fila.find('input[type="number"]:eq(0)').val();
+            var precio = fila.find('input[type="number"]:eq(1)').val();
+
+            // Enviar la solicitud AJAX para modificar el producto
+            $.ajax({
+                type: 'POST',
+                url: 'modificar_producto_ajax.php',
+                data: {
+                    idProducto: idProducto,
+                    nombreProducto: nombreProducto,
+                    existencia: existencia,
+                    precio: precio
+                },
+                success: function (response) {
+                    // Manejar la respuesta del servidor
+                    if (response.success) {
+                        // Recargar la página o actualizar la tabla
+                        location.reload();
+                    } else {
+                        // Mostrar un mensaje de error
+                        alert('Error al modificar el producto: ' + response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error en la solicitud AJAX');
+                }
+            });
+        });
+        
         $('#agregar-producto').click(function () {
             var tabla = $('#data-table'); // Reemplaza 'id-de-tu-tabla' con el ID de tu tabla
             var nuevaFila = '<tr><td></td><td><input type="text" name="nombreProducto" /></td><td><input type="number" name="existencia" /></td><td><input type="number" step="0.01" name="precio" /></td><td><button class="guardar-producto btn btn-primary">Guardar</button></td></tr>';

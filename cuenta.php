@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-    $conn = new mysqli("localhost", "root", "230403", "baristacafe");
+    $conn = new mysqli("localhost", "root", "", "baristacafe");
 
     // Verificar si la conexión fue exitosa
     if ($conn->connect_error) {
