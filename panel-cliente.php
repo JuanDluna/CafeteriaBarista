@@ -103,7 +103,7 @@ if ($sql->connect_error) {
                     <?php
                     // Obtener las reservaciones del usuario
                     $userId = $_SESSION['id_cliente'];
-                    $stmt = $sql->prepare("SELECT NumeroMesa, FechaReservacion, HoraReservacion FROM reservacion WHERE IdCliente = ?");
+                    $stmt = $sql->prepare("SELECT * FROM reservacion WHERE IdCliente = ?");
                     $stmt->bind_param("s", $userId);
                     $stmt->execute();
                     $result = $stmt->get_result();
@@ -114,14 +114,10 @@ if ($sql->connect_error) {
                             $horaReservacion = date('H:i', strtotime($row['HoraReservacion']));
                             echo "<td>" . $horaReservacion . "</td>";
                             echo "<td>" . $row['NumeroMesa'] . "</td>";
-                            // Agregar enlaces para eliminar y modificar
                             echo "<td>";
-                            echo "<button class='btn btn-danger btn-sm eliminar-reservacion' data-id='" . $row['IdReservacion'] . "'>Eliminar</button>";
+                            echo "<button class='btn btn-danger btn-sm eliminar-reservacion' data-numero-mesa='" . $row['NumeroMesa'] . "' data-id-cliente='" . $row['IdCliente'] . "' data-fecha-reservacion='" . $row['FechaReservacion'] . "' data-hora-reservacion='" . $row['HoraReservacion'] . "'>Eliminar</button>";
                             echo "</td>";
-                            
-                            echo "<button onclick=\"modificarReservacion()\" class='btn btn-primary btn-sm'>Modificar</button>";
-                            echo "</td>";
-                            echo "</tr>";
+                        
                         }
                     } else {
                         echo "<tr><td colspan='3' class='text-center'>No se encontraron reservaciones.</td></tr>";
@@ -210,6 +206,45 @@ if ($sql->connect_error) {
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.sticky.js"></script>
     <script src="js/vegas.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $('.eliminar-reservacion').click(function () {
+            var numeroMesa = $(this).data('numero-mesa');
+            var idCliente = $(this).data('id-cliente');
+            var fechaReservacion = $(this).data('fecha-reservacion');
+            var horaReservacion = $(this).data('hora-reservacion');
+
+            // Confirmar la eliminación con el usuario (puedes usar un modal u otra confirmación)
+            if (confirm("¿Estás seguro de que deseas eliminar esta reservación?")) {
+                // Enviar la solicitud AJAX para eliminar la reservación
+                $.ajax({
+                    type: 'POST',
+                    url: 'eliminar_reservacion_ajax.php',
+                    data: {
+                        numeroMesa: numeroMesa,
+                        idCliente: idCliente,
+                        fechaReservacion: fechaReservacion,
+                        horaReservacion: horaReservacion
+                    },
+                    success: function (response) {
+                        // Manejar la respuesta del servidor
+                        if (response.success) {
+                            // Recargar la página o actualizar la tabla
+                            location.reload();
+                        } else {
+                            // Mostrar un mensaje de error
+                            alert('Error al eliminar la reservación: ' + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error en la solicitud AJAX');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 
 </body>
 
