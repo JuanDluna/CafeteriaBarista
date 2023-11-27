@@ -34,20 +34,20 @@ if (
         // Éxito en la eliminación
         header("Content-Type: application/json");
         echo json_encode(['success' => true]);
+        $stmt->close();
+        $sql->close();
         exit();
     } else {
         // Error en la eliminación
         header("Content-Type: application/json");
         echo json_encode(['success' => false, 'message' => 'Error al eliminar la reservación: ' . $stmt->error]);
+        $stmt->close();
+        $sql->close();
         exit();
     }
-
-    $stmt->close();
-    $sql->close();
 } else {
     // Datos de la reservación no válidos
     header("Content-Type: application/json");
     echo json_encode(['success' => false, 'message' => 'Datos de la reservación no válidos']);
     exit();
 }
-?>
