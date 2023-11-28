@@ -1,12 +1,132 @@
 <?php
 
-// Create a connection
 $conn = new mysqli("localhost", "root", "230403", "baristacafe");
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+if ($_SERVER["REQUEST_METHOD"] == 'POST') {
+
+    if (isset($_POST['nombre'])) {
+        // Nuevo cliente
+        $nombre = $_POST['nombre'];
+        $correo = $_POST['correo'];
+        $fechaHora = $_POST['datetime'];
+        $personas = $_POST['num_personas'];
+        $direccion = $_POST['direccion'];
+        $telefono1 = $_POST['telefono1'];
+        $telefono2 = $_POST['telefono2'];
+
+        // Llamar al stored procedure para insertar el cliente
+        $stmt = $conn->prepare("CALL InsertarCliente(?, ?, ?, @p_IdCliente)");
+        $stmt->bind_param("sss", $nombre, $direccion, $correo);
+        $stmt->execute();
+
+        // Obtener el ID del cliente recién insertado
+        $stmt->close(); // Cierra el statement antes de ejecutar la siguiente consulta
+        $result = $conn->query("SELECT @p_IdCliente as IdCliente");
+        $row = $result->fetch_assoc();
+        $idCliente = $row['IdCliente'];
+
+        // Continuar con el procesamiento
+        if ($idCliente == -1) {
+            echo "<script>alert('Ya existe un cliente con esos datos.');</script>";
+        } else {
+            echo "<script>alert('ID del nuevo cliente: " . $idCliente . "');</script>";
+            // Insertar los teléfonos si están presentes
+            $stmtPhone = $conn->prepare("INSERT INTO TelefonosCliente(IdCliente, Telefonos) VALUES (?, ?)");
+
+            $stmtPhone->bind_param("is", $idCliente, $telefono1);
+            $stmtPhone->execute();
+
+            if (!empty($telefono2)) {
+                $stmtPhone->bind_param("is", $idCliente, $telefono2);
+                $stmtPhone->execute();
+            }
+
+            $stmtPhone->close();
+
+            // Separar la fecha y la hora
+            list($fechaReservacion, $horaReservacion) = explode('T', $fechaHora);
+
+            // Convertir la fecha y hora al formato adecuado para MySQL
+            $fechaHoraReservacion = date("Y-m-d H:i:s", strtotime("$fechaReservacion $horaReservacion"));
+
+            try {
+                // Llamar al procedimiento almacenado HacerReservacion
+                $stmt = $conn->prepare("CALL HacerReservacion(?, ?, ?, ?, @Mensaje)");
+                $stmt->bind_param("issi", $idCliente, $fechaReservacion, $fechaHoraReservacion, $personas);
+                $stmt->execute();
+
+                // Obtener el mensaje de la reserva
+                $result = $conn->query("SELECT @Mensaje as Mensaje");
+                $row = $result->fetch_assoc();
+                $mensajeReserva = $row['Mensaje'];
+
+                // Cerrar la conexión y liberar recursos
+                $stmt->close();
+                $conn->close();
+
+                // Mostrar el mensaje de la reserva
+                echo "<script>alert('" . $mensajeReserva . "');</script>";
+
+                // ... (más código)        
+            } catch (mysqli_sql_exception $e) {
+                echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+            }
+        }
+    } elseif (isset($_POST['id'])) {
+        // Cliente existente
+        $idCliente = $_POST['id'];
+        $correo = $_POST['email'];
+        $fechaHora = $_POST['datetime'];
+        $personas = $_POST['num_personas'];
+
+        // Verificar que el cliente exista en la base de datos
+        $stmtCheckCliente = $conn->prepare("SELECT IdCliente FROM cliente WHERE IdCliente = ? AND CorreoElectronico = ?");
+        $stmtCheckCliente->bind_param("is", $idCliente, $correo);
+        $stmtCheckCliente->execute();
+        $stmtCheckCliente->store_result();
+        $numRows = $stmtCheckCliente->num_rows;
+        $stmtCheckCliente->close();
+
+        if ($numRows == 0) {
+            echo "<script>alert('Cliente no encontrado.');</script>";
+        } else {
+            // Continuar con el procesamiento
+            // Separar la fecha y la hora
+            list($fechaReservacion, $horaReservacion) = explode('T', $fechaHora);
+
+            // Convertir la fecha y hora al formato adecuado para MySQL
+            $fechaHoraReservacion = date("Y-m-d H:i", strtotime("$fechaReservacion $horaReservacion"));
+
+            try {
+                // Llamar al procedimiento almacenado HacerReservacion
+                $stmt = $conn->prepare("CALL HacerReservacion(?, ?, ?, ?, @Mensaje)");
+                $stmt->bind_param("issi", $idCliente, $fechaReservacion, $fechaHoraReservacion, $personas);
+                $stmt->execute();
+
+                // Obtener el mensaje de la reserva
+                $result = $conn->query("SELECT @Mensaje as Mensaje");
+                $row = $result->fetch_assoc();
+                $mensajeReserva = $row['Mensaje'];
+
+                // Cerrar la conexión y liberar recursos
+                $stmt->close();
+                $conn->close();
+
+                // Mostrar el mensaje de la reserva
+                echo "<script>alert('" . $mensajeReserva . "');</script>";
+
+                // ... (más código)        
+            } catch (mysqli_sql_exception $e) {
+                echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+            }
+        }
+    }
+}
+
 ?>
 
 <!doctype html>
@@ -100,7 +220,7 @@ if ($conn->connect_error) {
                         <div class="booking-form-wrap">
                             <div class="row">
                                 <div class="col-lg-7 col-12 p-0">
-                                    <form class="custom-form booking-form" action="" method="post" role="form">
+                                    <form class="custom-form booking-form" id="newClientForm" action="" method="post">
                                         <div class="text-center mb-4 pb-lg-2">
                                             <em class="text-white">Reservación para clientes nuevos</em>
                                             <h2 class="text-white">Haz tu reservación</h2>
@@ -114,13 +234,13 @@ if ($conn->connect_error) {
                                                     <input type="email" class="form-control" name="correo" id="booking-form-email" placeholder="Correo Electrónico" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="datetime-local" name="booking-form-datetime" id="booking-form-datetime" class="form-control" required>
+                                                    <input type="datetime-local" name="datetime" id="booking-form-datetime" class="form-control" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
                                                     <input type="number" name="num_personas" id="booking-form-number" class="form-control" placeholder="Número de personas" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <input type="text" name="direccion" id="booking-form-direccion" class="form-control" placeholder="Dirección" required="">
+                                                    <input type="text" name="direccion" id="booking-form-direccion" class="form-control" placeholder="Dirección personal" required="">
                                                 </div>
                                                 <div class="col-lg-12 col-12">
                                                     <input type="tel" class="form-control" name="telefono1" id="booking-form-tel1" placeholder="Teléfono 1" pattern="[0-9]+" required>
@@ -129,7 +249,7 @@ if ($conn->connect_error) {
                                                     <input type="tel" class="form-control" name="telefono2" id="booking-form-tel2" placeholder="Teléfono 2" pattern="[0-9]+">
                                                 </div>
                                                 <div class="col-lg-4 col-md-10 col-8 mx-auto mt-2">
-                                                    <button type="submit" class="form-control" id="submitNewClient">Continuar</button>
+                                                    <button class="form-control" id="submitNewClient">Continuar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -152,7 +272,7 @@ if ($conn->connect_error) {
                         <div class="booking-form-wrap">
                             <div class="row">
                                 <div class="col-lg-7 col-12 p-0">
-                                    <form class="custom-form booking-form" action="existing_client_reservation.html" method="post" role="form">
+                                    <form class="custom-form booking-form" id="existingClientForm" action="" method="post">
                                         <div class="text-center mb-4 pb-lg-2">
                                             <em class="text-white">Reservación para clientes existentes</em>
                                             <h2 class="text-white">Haz tu reservación</h2>
@@ -160,19 +280,19 @@ if ($conn->connect_error) {
                                         <div class="booking-form-body">
                                             <div class="row">
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="text" name="booking-form-id" id="booking-form-id" class="form-control" placeholder="IdCliente" required>
+                                                    <input type="text" name="id" id="id" class="form-control" placeholder="IdCliente" required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="email" name="booking-form-email" id="booking-form-email" class="form-control" placeholder="Correo Electrónico" required>
+                                                    <input type="email" name="email" id="email" class="form-control" placeholder="Correo Electrónico" required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="datetime-local" name="booking-form-datetime" id="booking-form-datetime" class="form-control" required>
+                                                    <input type="datetime-local" name="datetime" id="datetime" class="form-control" required>
                                                 </div>
                                                 <div class="col-lg-6 col-12">
-                                                    <input type="number" name="booking-form-number" id="booking-form-number" class="form-control" placeholder="Número de personas" required>
+                                                    <input type="number" name="num_personas" id="number" class="form-control" placeholder="Número de personas" required>
                                                 </div>
                                                 <div class="col-lg-12 col-12">
-                                                    <button type="submit" id="buttonExistingClient" class="form-control">Continuar</button>
+                                                    <button id="submitExistingClient" class="form-control">Continuar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -267,79 +387,20 @@ if ($conn->connect_error) {
             $(document).ready(function() {
                 $("#formNewClient").hide();
                 $("#existing-client-form").hide();
-            });
-
-            $("#buttonNotClient").click(function() {
-                $("#IsClient").removeClass("min-vh-100");
-                $("#IsClient").addClass("d-none");
-                $("#formNewClient").show();
-            });
-
-            $("#buttonIsClient").click(function() {
-                $("#IsClient").removeClass("min-vh-100");
-                $("#IsClient").addClass("d-none");
-                $("#existing-client-form").show();
-            });
-
-            $("#submitNewClient").click(function() {
-                var fechaHora = $('#booking-form-datetime').val();
-                var nombre = $('#booking-form-name').val();
-                var correo = $('#booking-form-email').val();
-                var direccion = $('#booking-form-direccion').val();
-                var telefono1 = $('#booking-form-tel1').val();
-                var telefono2 = $('#booking-form-tel2').val();
-                var num_personas = $('#booking-form-number').val();
 
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'nuevo_cliente_reservacion.php', // Cambia esto con la ruta correcta
-                    data: {
-                        nombre: nombre,
-                        correo: correo,
-                        fechaHora: fechaHora,
-                        num_personas: num_personas,
-                        direccion: direccion,
-                        telefono1: telefono1,
-                        telefono2: telefono2
-                    },
-                    success: function(response) {
-                        alert(response.message);
-                    },
-                    error: function(err) {
-                        alert(err.message);
-                    }
+                $("#buttonNotClient").click(function() {
+                    $("#IsClient").removeClass("min-vh-100");
+                    $("#IsClient").addClass("d-none");
+                    $("#formNewClient").show();
                 });
-            });
 
-            $("#buttonExistingClient").click(function() {
-                var fechaHora = $('#booking-form-datetime').val();
-                var nombre = $('#booking-form-name').val();
-                var correo = $('#booking-form-email').val();
-                var direccion = $('#booking-form-direccion').val();
-                var telefono1 = $('#booking-form-tel1').val();
-                var telefono2 = $('#booking-form-tel2').val();
-                var num_personas = $('#booking-form-number').val();
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'cliente_existente_reservacion.php', // Cambia esto con la ruta correcta
-                    data: {
-                        nombre: nombre,
-                        correo: correo,
-                        fechaHora: fechaHora,
-                        num_personas: num_personas,
-                        direccion: direccion,
-                        telefono1: telefono1,
-                        telefono2: telefono2
-                    },
-                    success: function(response) {
-                        alert(response.message);
-                    },
-                    error: function(err) {
-                        alert(err.message);
-                    }
+                $("#buttonIsClient").click(function() {
+                    $("#IsClient").removeClass("min-vh-100");
+                    $("#IsClient").addClass("d-none");
+                    $("#existing-client-form").show();
                 });
+
             });
         </script>
 
