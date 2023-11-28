@@ -3,10 +3,11 @@
 $conn = new mysqli("localhost", "root", "230403", "baristacafe");
 
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
 }
 
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
+    $response = ["success" => false];
 
     if (isset($_POST['nombre'])) {
         // Nuevo cliente
@@ -62,18 +63,11 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
                 // Obtener el mensaje de la reserva
                 $result = $conn->query("SELECT @Mensaje as Mensaje");
                 $row = $result->fetch_assoc();
-                $mensajeReserva = $row['Mensaje'];
+                $response["message"] = $row['Mensaje'];
 
-                // Cerrar la conexión y liberar recursos
                 $stmt->close();
-                $conn->close();
-
-                // Mostrar el mensaje de la reserva
-                echo "<script>alert('" . $mensajeReserva . "');</script>";
-
-                // ... (más código)        
             } catch (mysqli_sql_exception $e) {
-                echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+                $response["error"] = "Error: " . $e->getMessage();
             }
         }
     } elseif (isset($_POST['id'])) {
@@ -92,8 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         $stmtCheckCliente->close();
 
         if ($numRows == 0) {
-            echo "<script>alert('Cliente no encontrado.');</script>";
+            $response["message"] = "Cliente no encontrado.";
         } else {
+            $response["success"] = true;
             // Continuar con el procesamiento
             // Separar la fecha y la hora
             list($fechaReservacion, $horaReservacion) = explode('T', $fechaHora);
@@ -110,21 +105,14 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
                 // Obtener el mensaje de la reserva
                 $result = $conn->query("SELECT @Mensaje as Mensaje");
                 $row = $result->fetch_assoc();
-                $mensajeReserva = $row['Mensaje'];
+                $response["message"] = $row['Mensaje'];
 
-                // Cerrar la conexión y liberar recursos
                 $stmt->close();
-                $conn->close();
-
-                // Mostrar el mensaje de la reserva
-                echo "<script>alert('" . $mensajeReserva . "');</script>";
-
-                // ... (más código)        
             } catch (mysqli_sql_exception $e) {
-                echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+                $response["error"] = "Error: " . $e->getMessage();
             }
         }
     }
+    echo json_encode($response);
 }
-
 ?>
