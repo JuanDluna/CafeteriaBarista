@@ -32,9 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 
         // Continuar con el procesamiento
         if ($idCliente == -1) {
-            echo "<script>alert('Ya existe un cliente con esos datos.');</script>";
+            $response["message"] = "Ya existe un cliente con esos datos.";
         } else {
-            echo "<script>alert('ID del nuevo cliente: " . $idCliente . "');</script>";
+            $response["success"] = true;
+            $response["idCliente"] = $idCliente;
             // Insertar los teléfonos si están presentes
             $stmtPhone = $conn->prepare("INSERT INTO TelefonosCliente(IdCliente, Telefonos) VALUES (?, ?)");
 
@@ -52,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
             list($fechaReservacion, $horaReservacion) = explode('T', $fechaHora);
 
             // Convertir la fecha y hora al formato adecuado para MySQL
-            $fechaHoraReservacion = date("Y-m-d H:i:s", strtotime("$fechaReservacion $horaReservacion"));
+            $fechaHoraReservacion = date("Y-m-d H:i", strtotime("$fechaReservacion $horaReservacion"));
 
             try {
                 // Llamar al procedimiento almacenado HacerReservacion
@@ -115,4 +116,3 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     }
     echo json_encode($response);
 }
-?>
